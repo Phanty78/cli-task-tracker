@@ -11,3 +11,20 @@ interface Task {
     updatesAt : Date
 }
 
+let tasks: Task[] = []
+let taskId: number = 1
+
+
+function addTask(taskDescription : string): void{
+    const timestamp: number = Date.now()
+    const date: Date = new Date(timestamp)
+    let newTask: Task = {
+        id : taskId,
+        description : taskDescription,
+        status : Status.InProgress,
+        createAt : date,
+        updatesAt : date
+    }
+    tasks.push(newTask)
+    taskId++
+}
