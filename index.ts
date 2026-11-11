@@ -14,8 +14,7 @@ interface Task {
 let tasks: Task[] = []
 let taskId: number = 1
 
-
-function addTask(taskDescription : string): void{
+async function addTask(taskDescription : string): Promise<void>{
     const timestamp: number = Date.now()
     const date: Date = new Date(timestamp)
     let newTask: Task = {
@@ -26,22 +25,23 @@ function addTask(taskDescription : string): void{
         updatesAt : date
     }
     tasks.push(newTask)
+    await Bun.write("tasks..json", JSON.stringify(tasks, null, 2));
     taskId++
 }
 
-function updateTaskStatus(taskId: number, command: string): void{
-    const taskExist = tasks.some(item => item.id === taskId)
-    console.log(taskExist)
-    if (taskExist){
-        //TODO -  Le bug est ici : l'ID ne correspond pas à l'index, La méthode solide est d'attribuer la variable task Directement en fonction de l'ID et non pas en fonction de l'index.
-        let task = tasks[taskId]
+async function updateTaskStatus(taskId: number, command: string): Promise<void>{
+    let task = tasks.find(item => item.id === taskId)
+    if (task){
         if (command === "mark-in-progress"){
             if (task !== null && task !== undefined) {
                task.status = Status.InProgress 
+               await Bun.write("output.json", JSON.stringify(tasks, null, 2));
             }    
-        }else{
+        }
+        if (command === "mark-done"){
             if (task !== null && task !== undefined) {
                task.status = Status.Done
+               await Bun.write("output.json", JSON.stringify(tasks, null, 2));
             }
         }
     }else{
@@ -56,8 +56,15 @@ console.log("Type mark-in progress or mark-done follow by the id.")
 for await (const line of console) {
     let splitedUserInput = line.split(" ")
     let command = splitedUserInput[0]
-    let id: number = Number(splitedUserInput[1])
-    if (command === "add"){
+    let id: number = 1
+    if (splitedUserInput[2]){
+        console.log(splitedUserInput[2])
+        id = Number(splitedUserInput[2])
+    }
+    if (Number.isNaN(id)){
+        console.log("Id should be a valid number.")
+    }else{
+            if (command === "add"){
         let descriptionArray = splitedUserInput.slice(1)
         if (descriptionArray[0] !== undefined){
             let description = descriptionArray.join(" ")
@@ -83,6 +90,6 @@ for await (const line of console) {
     }
     if (command === "mark-in-progress" || command === "mark-done"){
             updateTaskStatus(id,command)
-            console.log(tasks)
+    }
     }
 }
