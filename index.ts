@@ -11,14 +11,16 @@ interface Task {
 	updatesAt: Date;
 }
 
+const tasks: Task[] = [];
+let taskId: number = 1;
+
 // Loading existant data
 const tasksFile = Bun.file("tasks.json");
 if (await tasksFile.exists()) {
 	await tasksFile.json();
+}else{
+    await Bun.write("tasks.json", JSON.stringify(tasks, null, 2))
 }
-
-const tasks: Task[] = [];
-let taskId: number = 1;
 
 function updateDateAtNow(): Date {
 	const timestamp: number = Date.now();
