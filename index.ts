@@ -62,12 +62,13 @@ async function updateTaskStatus(
 	}
 }
 
-function deleteTask(id: number): void {
+async function deleteTask(id: number): Promise<void> {
 	const task = tasks.find((item) => item.id === id);
 	if (task){
 		const index = tasks.findIndex(item => item.id === id);
 		if (index > -1) {
   			tasks.splice(index, 1);
+			await Bun.write("tasks.json", JSON.stringify(tasks, null, 2));
 			console.log(`Task ${id} delete successfully.`)
 		}   
 	}else {
@@ -141,7 +142,7 @@ for await (const line of console) {
 				console.log("Id should be stricly superior or egal to 1.");
 			}
 		} else {
-			deleteTask(id)
+			await deleteTask(id)
 		}
 	}
 }
