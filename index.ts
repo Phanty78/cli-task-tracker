@@ -76,6 +76,14 @@ async function deleteTask(id: number): Promise<void> {
 	}
 }
 
+function listTasks(): void {
+	if (tasks.length < 1) {
+		console.log("There aren't any tasks—create one with “add”!")
+	}else{
+		console.log(tasks)
+	}
+}
+
 console.log("Welcome to my task management app");
 console.log("Type add 'table description' to add a new task.");
 console.log("Type mark-in progress or mark-done follow by the id to update task status.");
@@ -144,5 +152,8 @@ for await (const line of console) {
 		} else {
 			await deleteTask(id)
 		}
+	}
+	if (command === "list"){
+		listTasks()
 	}
 }
