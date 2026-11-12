@@ -77,7 +77,8 @@ function deleteTask(id: number): void {
 
 console.log("Welcome to my task management app");
 console.log("Type add 'table description' to add a new task.");
-console.log("Type mark-in progress or mark-done follow by the id.");
+console.log("Type mark-in progress or mark-done follow by the id to update task status.");
+console.log("Type delete follow by the id to delete a task")
 
 for await (const line of console) {
 	const splitedUserInput = line.split(" ");
@@ -107,7 +108,6 @@ for await (const line of console) {
 			console.log("The add command does not include a description");
 		}
 	}
-
 	if (command === "mark-in-progress" || command === "mark-done") {
 		if (splitedUserInput[1]) {
 			id = Number(splitedUserInput[1]);
