@@ -11,15 +11,23 @@ interface Task {
 	updatesAt: Date;
 }
 
-const tasks: Task[] = [];
-let taskId: number = 1;
+let tasks: Task[] = []
+let taskId: number 
 
 // Loading existant data
-const tasksFile = Bun.file("tasks.json");
+const tasksFile = Bun.file("tasks.json")
 if (await tasksFile.exists()) {
-	await tasksFile.json();
+	tasks = await tasksFile.json()
 }else{
     await Bun.write("tasks.json", JSON.stringify(tasks, null, 2))
+}
+
+// determinate taskId
+if (tasks.length > 1){
+	taskId = Math.max(...tasks.map(obj => obj.id))
+	console.log(taskId)
+} else {
+	taskId = 1
 }
 
 function updateDateAtNow(): Date {
