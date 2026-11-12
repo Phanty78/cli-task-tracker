@@ -22,10 +22,9 @@ if (await tasksFile.exists()) {
     await Bun.write("tasks.json", JSON.stringify(tasks, null, 2))
 }
 
-// determinate taskId
-if (tasks.length > 1){
-	taskId = Math.max(...tasks.map(obj => obj.id))
-	console.log(taskId)
+// determinate next taskId available
+if (tasks.length >= 1){
+	taskId = Math.max(...tasks.map(obj => obj.id)) + 1
 } else {
 	taskId = 1
 }
