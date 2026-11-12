@@ -12,18 +12,18 @@ interface Task {
 }
 
 // Loading existant data
-const tasksFile = Bun.file("tasks.json")
-if (await tasksFile.exists()){
-    await tasksFile.json()
+const tasksFile = Bun.file("tasks.json");
+if (await tasksFile.exists()) {
+	await tasksFile.json();
 }
 
 const tasks: Task[] = [];
 let taskId: number = 1;
 
 function updateDateAtNow(): Date {
-    const timestamp: number = Date.now();
+	const timestamp: number = Date.now();
 	const date: Date = new Date(timestamp);
-    return date
+	return date;
 }
 
 async function addTask(taskDescription: string): Promise<void> {
@@ -32,7 +32,7 @@ async function addTask(taskDescription: string): Promise<void> {
 		description: taskDescription,
 		status: Status.Todo,
 		createAt: updateDateAtNow(),
-		updatesAt: updateDateAtNow()
+		updatesAt: updateDateAtNow(),
 	};
 	tasks.push(newTask);
 	await Bun.write("tasks.json", JSON.stringify(tasks, null, 2));
@@ -47,12 +47,12 @@ async function updateTaskStatus(
 	if (task) {
 		if (command === "mark-in-progress") {
 			task.status = Status.InProgress;
-            task.updatesAt = updateDateAtNow()
+			task.updatesAt = updateDateAtNow();
 			await Bun.write("tasks.json", JSON.stringify(tasks, null, 2));
 		}
 		if (command === "mark-done") {
 			task.status = Status.Done;
-            task.updatesAt = updateDateAtNow()
+			task.updatesAt = updateDateAtNow();
 			await Bun.write("tasks.json", JSON.stringify(tasks, null, 2));
 		}
 	} else {
@@ -67,7 +67,7 @@ console.log("Type mark-in progress or mark-done follow by the id.");
 for await (const line of console) {
 	const splitedUserInput = line.split(" ");
 	const command = splitedUserInput[0];
-	let id: number = 0
+	let id: number = 0;
 	if (command === "add") {
 		const descriptionArray = splitedUserInput.slice(1);
 		if (descriptionArray[0] !== undefined) {
@@ -98,15 +98,15 @@ for await (const line of console) {
 			id = Number(splitedUserInput[1]);
 		}
 		if (Number.isNaN(id) || !Number.isInteger(id) || id < 1) {
-            if (Number.isNaN(id)){
-                console.log("Id should be a valid number.");
-            }
-            if (!Number.isInteger(id)){
-                console.log("Id should be an integer.");
-            }
-            if (id < 1) {
-                console.log("Id should be stricly superior or egal to 1.");
-            }
+			if (Number.isNaN(id)) {
+				console.log("Id should be a valid number.");
+			}
+			if (!Number.isInteger(id)) {
+				console.log("Id should be an integer.");
+			}
+			if (id < 1) {
+				console.log("Id should be stricly superior or egal to 1.");
+			}
 		} else {
 			await updateTaskStatus(id, command);
 		}
