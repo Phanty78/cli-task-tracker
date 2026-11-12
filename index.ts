@@ -58,7 +58,20 @@ async function updateTaskStatus(
 			await Bun.write("tasks.json", JSON.stringify(tasks, null, 2));
 		}
 	} else {
-		console.log("This Id don't exist.");
+		console.log("This task don't exist.");
+	}
+}
+
+function deleteTask(id: number): void {
+	const task = tasks.find((item) => item.id === id);
+	if (task){
+		const index = tasks.findIndex(item => item.id === id);
+		if (index > -1) {
+  			tasks.splice(index, 1);
+			console.log(`Task ${id} delete successfully.`)
+		}   
+	}else {
+		console.log("This task don't exist.")
 	}
 }
 
@@ -111,6 +124,24 @@ for await (const line of console) {
 			}
 		} else {
 			await updateTaskStatus(id, command);
+		}
+	}
+	if (command === "delete"){
+		if (splitedUserInput[1]) {
+			id = Number(splitedUserInput[1]);
+		}
+		if (Number.isNaN(id) || !Number.isInteger(id) || id < 1) {
+			if (Number.isNaN(id)) {
+				console.log("Id should be a valid number.");
+			}
+			if (!Number.isInteger(id)) {
+				console.log("Id should be an integer.");
+			}
+			if (id < 1) {
+				console.log("Id should be stricly superior or egal to 1.");
+			}
+		} else {
+			deleteTask(id)
 		}
 	}
 }
