@@ -1,95 +1,114 @@
 enum Status {
-    Todo = "TODO",
-    InProgress = "IN-PROGRESS",
-    Done = "DONE"
+	Todo = "TODO",
+	InProgress = "IN-PROGRESS",
+	Done = "DONE",
 }
 interface Task {
-    id : number,
-    description : string,
-    status : Status,
-    createAt : Date,
-    updatesAt : Date
+	id: number;
+	description: string;
+	status: Status;
+	createAt: Date;
+	updatesAt: Date;
 }
 
-let tasks: Task[] = []
-let taskId: number = 1
-
-async function addTask(taskDescription : string): Promise<void>{
-    const timestamp: number = Date.now()
-    const date: Date = new Date(timestamp)
-    let newTask: Task = {
-        id : taskId,
-        description : taskDescription,
-        status : Status.Todo,
-        createAt : date,
-        updatesAt : date
-    }
-    tasks.push(newTask)
-    await Bun.write("tasks..json", JSON.stringify(tasks, null, 2));
-    taskId++
+// Loading existant data
+const tasksFile = Bun.file("tasks.json")
+if (await tasksFile.exists()){
+    await tasksFile.json()
 }
 
-async function updateTaskStatus(taskId: number, command: string): Promise<void>{
-    let task = tasks.find(item => item.id === taskId)
-    if (task){
-        if (command === "mark-in-progress"){
-            if (task !== null && task !== undefined) {
-               task.status = Status.InProgress 
-               await Bun.write("output.json", JSON.stringify(tasks, null, 2));
-            }    
-        }
-        if (command === "mark-done"){
-            if (task !== null && task !== undefined) {
-               task.status = Status.Done
-               await Bun.write("output.json", JSON.stringify(tasks, null, 2));
-            }
-        }
-    }else{
-        console.log("This Id don't exist.")
-    }
+const tasks: Task[] = [];
+let taskId: number = 1;
+
+function updateDateAtNow(): Date {
+    const timestamp: number = Date.now();
+	const date: Date = new Date(timestamp);
+    return date
 }
 
-console.log("Welcome to my task management app")
-console.log ("Type add 'table description' to add a new task.")
-console.log("Type mark-in progress or mark-done follow by the id.")
+async function addTask(taskDescription: string): Promise<void> {
+	const newTask: Task = {
+		id: taskId,
+		description: taskDescription,
+		status: Status.Todo,
+		createAt: updateDateAtNow(),
+		updatesAt: updateDateAtNow()
+	};
+	tasks.push(newTask);
+	await Bun.write("tasks.json", JSON.stringify(tasks, null, 2));
+	taskId++;
+}
+
+async function updateTaskStatus(
+	taskId: number,
+	command: string,
+): Promise<void> {
+	const task = tasks.find((item) => item.id === taskId);
+	if (task) {
+		if (command === "mark-in-progress") {
+			task.status = Status.InProgress;
+            task.updatesAt = updateDateAtNow()
+			await Bun.write("tasks.json", JSON.stringify(tasks, null, 2));
+		}
+		if (command === "mark-done") {
+			task.status = Status.Done;
+            task.updatesAt = updateDateAtNow()
+			await Bun.write("tasks.json", JSON.stringify(tasks, null, 2));
+		}
+	} else {
+		console.log("This Id don't exist.");
+	}
+}
+
+console.log("Welcome to my task management app");
+console.log("Type add 'table description' to add a new task.");
+console.log("Type mark-in progress or mark-done follow by the id.");
 
 for await (const line of console) {
-    let splitedUserInput = line.split(" ")
-    let command = splitedUserInput[0]
-    let id: number = 1
-    if (splitedUserInput[2]){
-        console.log(splitedUserInput[2])
-        id = Number(splitedUserInput[2])
-    }
-    if (Number.isNaN(id)){
-        console.log("Id should be a valid number.")
-    }else{
-            if (command === "add"){
-        let descriptionArray = splitedUserInput.slice(1)
-        if (descriptionArray[0] !== undefined){
-            let description = descriptionArray.join(" ")
-            if (description[0] === '"') {
-                description = description.slice(1)
+	const splitedUserInput = line.split(" ");
+	const command = splitedUserInput[0];
+	let id: number = 0
+	if (command === "add") {
+		const descriptionArray = splitedUserInput.slice(1);
+		if (descriptionArray[0] !== undefined) {
+			let description = descriptionArray.join(" ");
+			if (description[0] === '"') {
+				description = description.slice(1);
+			}
+			if (description[description.length - 1] === '"') {
+				description = description.slice(0, -1);
+			}
+			description = description.trim();
+			if (description === "") {
+				console.log("description can't be empty.");
+			} else {
+				if (description === '""') {
+					console.log("description can't be empty.");
+				} else {
+					await addTask(description);
+				}
+			}
+		} else {
+			console.log("The add command does not include a description");
+		}
+	}
+
+	if (command === "mark-in-progress" || command === "mark-done") {
+		if (splitedUserInput[1]) {
+			id = Number(splitedUserInput[1]);
+		}
+		if (Number.isNaN(id) || !Number.isInteger(id) || id < 1) {
+            if (Number.isNaN(id)){
+                console.log("Id should be a valid number.");
             }
-            if (description[description.length -1] === '"') {
-                description = description.slice(0, -1)
+            if (!Number.isInteger(id)){
+                console.log("Id should be an integer.");
             }
-            description = description.trim()
-            if (description === "") {
-                console.log("description can't be empty.")
-            }else{
-                if (description === '""') {
-                    console.log("description can't be empty.")
-                } else {
-                    addTask(description)
-                }
+            if (id < 1) {
+                console.log("Id should be stricly superior or egal to 1.");
             }
-        }else {
-            console.log("The add command does not include a description")
-        }
-    }
-    if (command === "mark-in-progress" || command === "mark-done"){
-            updateTaskStatus(id,command)
-    }
-    }
+		} else {
+			await updateTaskStatus(id, command);
+		}
+	}
 }
