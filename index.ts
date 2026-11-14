@@ -205,9 +205,11 @@ for await (const line of console) {
 						filteredList(Status.Todo);
 						break;
 					default:
-						console.log("This list filter is invalid.");
+						console.log("An unknown error has occurred.");
 						break;
 				}
+			} else {
+				console.log("The filter you entered is invalid.")
 			}
 		} else {
 			listTasks();
