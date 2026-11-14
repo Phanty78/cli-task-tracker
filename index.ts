@@ -103,6 +103,16 @@ function listTasks(): void {
 	}
 }
 
+function cleanDescription(description : string): string {
+	if (description[0] === '"') {
+		description = description.slice(1);
+	}
+	if (description[description.length - 1] === '"') {
+		description = description.slice(0, -1);
+	}
+	return description
+}
+
 console.log("Welcome to my task management app");
 console.log("Type add 'table description' to add a new task.");
 console.log(
@@ -119,12 +129,7 @@ for await (const line of console) {
 		const descriptionArray = splitedUserInput.slice(1);
 		if (descriptionArray[0] !== undefined) {
 			let description = descriptionArray.join(" ");
-			if (description[0] === '"') {
-				description = description.slice(1);
-			}
-			if (description[description.length - 1] === '"') {
-				description = description.slice(0, -1);
-			}
+			description = cleanDescription(description)
 			description = description.trim();
 			if (description === "") {
 				console.log("description can't be empty.");
@@ -194,15 +199,9 @@ for await (const line of console) {
 			}
 		} else {
 			const descriptionArray = splitedUserInput.slice(2);
-			console.log(descriptionArray);
 			if (descriptionArray[0] !== undefined) {
 				let description = descriptionArray.join(" ");
-				if (description[0] === '"') {
-					description = description.slice(1);
-				}
-				if (description[description.length - 1] === '"') {
-					description = description.slice(0, -1);
-				}
+				description = cleanDescription(description)
 				description = description.trim();
 				if (description === "") {
 					console.log("description can't be empty.");
