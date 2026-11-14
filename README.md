@@ -1,6 +1,7 @@
 # cli-task-tracker
 
 A simple CLI task tracker built with TypeScript and Bun as part of my learning journey, following the roadmap.sh project specifications.
+https://roadmap.sh/projects/task-tracker
 
 To install dependencies:
 
