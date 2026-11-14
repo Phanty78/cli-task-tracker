@@ -35,3 +35,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Fichier de tasks
 tasks.json
+
+# fichier de dev
+todo.md
