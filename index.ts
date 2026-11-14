@@ -103,14 +103,14 @@ function listTasks(): void {
 	}
 }
 
-function cleanDescription(description : string): string {
+function cleanDescription(description: string): string {
 	if (description[0] === '"') {
 		description = description.slice(1);
 	}
 	if (description[description.length - 1] === '"') {
 		description = description.slice(0, -1);
 	}
-	return description
+	return description;
 }
 
 console.log("Welcome to my task management app");
@@ -129,7 +129,7 @@ for await (const line of console) {
 		const descriptionArray = splitedUserInput.slice(1);
 		if (descriptionArray[0] !== undefined) {
 			let description = descriptionArray.join(" ");
-			description = cleanDescription(description)
+			description = cleanDescription(description);
 			description = description.trim();
 			if (description === "") {
 				console.log("description can't be empty.");
@@ -201,7 +201,7 @@ for await (const line of console) {
 			const descriptionArray = splitedUserInput.slice(2);
 			if (descriptionArray[0] !== undefined) {
 				let description = descriptionArray.join(" ");
-				description = cleanDescription(description)
+				description = cleanDescription(description);
 				description = description.trim();
 				if (description === "") {
 					console.log("description can't be empty.");
