@@ -113,6 +113,18 @@ function cleanDescription(description: string): string {
 	return description;
 }
 
+function handleIdError(id: unknown): void {
+	if (Number.isNaN(id)) {
+		console.log("Id should be a valid number.");
+	}
+	if (!Number.isInteger(id)) {
+		console.log("Id should be an integer.");
+	}
+	if (typeof id === "number" && id < 1) {
+		console.log("Id should be stricly superior or egal to 1.");
+	}
+}
+
 console.log("Welcome to my task management app");
 console.log("Type add 'table description' to add a new task.");
 console.log(
@@ -149,15 +161,7 @@ for await (const line of console) {
 			id = Number(splitedUserInput[1]);
 		}
 		if (Number.isNaN(id) || !Number.isInteger(id) || id < 1) {
-			if (Number.isNaN(id)) {
-				console.log("Id should be a valid number.");
-			}
-			if (!Number.isInteger(id)) {
-				console.log("Id should be an integer.");
-			}
-			if (id < 1) {
-				console.log("Id should be stricly superior or egal to 1.");
-			}
+			handleIdError(id)
 		} else {
 			await updateTaskStatus(id, command);
 		}
@@ -167,15 +171,7 @@ for await (const line of console) {
 			id = Number(splitedUserInput[1]);
 		}
 		if (Number.isNaN(id) || !Number.isInteger(id) || id < 1) {
-			if (Number.isNaN(id)) {
-				console.log("Id should be a valid number.");
-			}
-			if (!Number.isInteger(id)) {
-				console.log("Id should be an integer.");
-			}
-			if (id < 1) {
-				console.log("Id should be stricly superior or egal to 1.");
-			}
+			handleIdError(id)
 		} else {
 			await deleteTask(id);
 		}
@@ -188,15 +184,7 @@ for await (const line of console) {
 			id = Number(splitedUserInput[1]);
 		}
 		if (Number.isNaN(id) || !Number.isInteger(id) || id < 1) {
-			if (Number.isNaN(id)) {
-				console.log("Id should be a valid number.");
-			}
-			if (!Number.isInteger(id)) {
-				console.log("Id should be an integer.");
-			}
-			if (id < 1) {
-				console.log("Id should be stricly superior or egal to 1.");
-			}
+			handleIdError(id)
 		} else {
 			const descriptionArray = splitedUserInput.slice(2);
 			if (descriptionArray[0] !== undefined) {
