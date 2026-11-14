@@ -29,12 +29,6 @@ if (tasks.length >= 1) {
 	taskId = 1;
 }
 
-function updateDateAtNow(): Date {
-	const timestamp: number = Date.now();
-	const date: Date = new Date(timestamp);
-	return date;
-}
-
 async function addTask(taskDescription: string): Promise<void> {
 	const newTask: Task = {
 		id: taskId,
@@ -103,6 +97,15 @@ function listTasks(): void {
 	}
 }
 
+function filteredList(status: Status): void {
+	const filteredTasks: Task[] = tasks.filter((task) => task.status === status);
+	if (filteredTasks.length < 1) {
+		console.log(`There aren't any tasks with the status ${status}.`);
+	} else {
+		console.log(filteredTasks);
+	}
+}
+
 function cleanDescription(description: string): string {
 	if (description[0] === '"') {
 		description = description.slice(1);
@@ -111,6 +114,12 @@ function cleanDescription(description: string): string {
 		description = description.slice(0, -1);
 	}
 	return description;
+}
+
+function updateDateAtNow(): Date {
+	const timestamp: number = Date.now();
+	const date: Date = new Date(timestamp);
+	return date;
 }
 
 function handleIdError(id: unknown): void {
@@ -161,7 +170,7 @@ for await (const line of console) {
 			id = Number(splitedUserInput[1]);
 		}
 		if (Number.isNaN(id) || !Number.isInteger(id) || id < 1) {
-			handleIdError(id)
+			handleIdError(id);
 		} else {
 			await updateTaskStatus(id, command);
 		}
@@ -171,20 +180,45 @@ for await (const line of console) {
 			id = Number(splitedUserInput[1]);
 		}
 		if (Number.isNaN(id) || !Number.isInteger(id) || id < 1) {
-			handleIdError(id)
+			handleIdError(id);
 		} else {
 			await deleteTask(id);
 		}
 	}
 	if (command === "list") {
-		listTasks();
+		const status = splitedUserInput[1];
+		console.log(status);
+		if (status) {
+			if (
+				status === Status.Done ||
+				status === Status.InProgress ||
+				status === Status.Todo
+			) {
+				switch (status) {
+					case Status.Done:
+						filteredList(Status.Done);
+						break;
+					case Status.InProgress:
+						filteredList(Status.InProgress);
+						break;
+					case Status.Todo:
+						filteredList(Status.Todo);
+						break;
+					default:
+						console.log("This list filter is invalid.");
+						break;
+				}
+			}
+		} else {
+			listTasks();
+		}
 	}
 	if (command === "update") {
 		if (splitedUserInput[1]) {
 			id = Number(splitedUserInput[1]);
 		}
 		if (Number.isNaN(id) || !Number.isInteger(id) || id < 1) {
-			handleIdError(id)
+			handleIdError(id);
 		} else {
 			const descriptionArray = splitedUserInput.slice(2);
 			if (descriptionArray[0] !== undefined) {
