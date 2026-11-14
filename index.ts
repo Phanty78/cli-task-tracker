@@ -134,13 +134,14 @@ function handleIdError(id: unknown): void {
 	}
 }
 
-console.log("Welcome to my task management app");
+console.log("=== Welcome to my task management app ===");
 console.log("Type add 'table description' to add a new task.");
 console.log(
 	"Type mark-in progress or mark-done follow by the id to update task status.",
 );
 console.log("Type delete follow by the id to delete a task");
-console.log("Type list to display all tasks.");
+console.log("Type update follow by the id and the new description to update a task.")
+console.log("Type list to display all tasks, You can also add the following filters: todo, in-progress, done.");
 
 for await (const line of console) {
 	const splitedUserInput = line.split(" ");
