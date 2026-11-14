@@ -186,9 +186,9 @@ for await (const line of console) {
 		}
 	}
 	if (command === "list") {
-		const status = splitedUserInput[1];
-		console.log(status);
+		let status = splitedUserInput[1];
 		if (status) {
+			status = status.toUpperCase()
 			if (
 				status === Status.Done ||
 				status === Status.InProgress ||
